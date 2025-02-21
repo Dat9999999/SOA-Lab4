@@ -37,6 +37,24 @@ async def get_user(id: str):
 
     return {"user": db[id]}  # FastAPI sẽ tự động convert thành JSON
 
+@app.put("/user/{id}")
+async def get_user(id: str, user_edit:User):
+    if id not in db:
+        raise HTTPException(status_code=404, detail=f"Invalid user ID: {id}")
+    user = db[id]
+    user.name = user_edit.name
+    user.age = user_edit.age
+    return {"message":"edited successful"}  # FastAPI sẽ tự động convert thành JSON
+
+
+@app.delete("/user/{id}")
+async def get_user(id: str):
+    if id not in db:
+        raise HTTPException(status_code=404, detail=f"Invalid user ID: {id}")
+    db.pop(id)
+    return {"message":"deleted successful"}  # FastAPI sẽ tự động convert thành JSON
+
+
 
 
 
