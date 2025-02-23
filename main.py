@@ -8,6 +8,20 @@ db = {
     "1": User(name="Alice", age=25),
     "2": User(name="Bob", age=30)
 }
+db_post ={
+    "1" :
+    # comment
+    {
+        "1":"great",
+        "2": "awsome"
+    },
+    "2":
+    # comment
+    {
+        "3":"Thank you",
+        "4" : "You should do more exercise a"
+    }
+}
 
 @app.get("/")
 async def root():
@@ -55,6 +69,40 @@ async def get_user(id: str):
     return {"message":"deleted successful"}  # FastAPI sẽ tự động convert thành JSON
 
 
+#cau10
+@app.get("/v1/greeting/{name}")
+async def greeting(name: str):
+    return {"message": f"hello {name}"}  # FastAPI sẽ tự động convert thành JSON
 
+@app.get("/v2/greeting/{name}")
+async def greeting_multible_languages(name: str):
+    multiple_languages = {
+        "en": f"Hello {name}",
+        "fr": f"Bonjour {name}",
+        "vi": f"Xin chào {name}"
+    }
+    return {"message": multiple_languages}
 
+#cau11
+@app.get("/hello/{language_code}/{name}")
+async def greeting(language_code,name: str):
+    languages = {"en": f"Hello {name}",
+                 "fr": f"Bonjour {name}",
+                 "vi": f"Xin chào {name}"}
+    if language_code not in languages:
+        raise HTTPException(status_code=404, detail=f"Invalid language code: {language_code}")
+    return {"message": f"{languages[language_code]} {name}"}
 
+#cau12
+
+@app.get("/posts/{post_id}/comments/{comment_id}")
+async def post_comment(post_id: str, comment_id: str):
+    if post_id not in db_post:
+        raise HTTPException(status_code=404, detail=f"Invalid post ID: {post_id}")
+    if comment_id not in db_post[post_id]:
+        raise HTTPException(status_code=404, detail=f"Invalid comment ID: {comment_id}")
+    return {"comment": f"{db_post[post_id][comment_id]}"}
+
+@app.get("/file/{file_path:path}")
+async def get_file(file_path: str):
+    return {"status": f"receive file successfully {file_path}"}
