@@ -32,11 +32,17 @@ async def root():
     return {"message": "Hello World"}
 
 
+#cau1
 @app.get("/hello/{name}")
 async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+    return {"message": f"Hello, {name}!"}
 
-
+#cau2
+@app.get("/age/{age}")
+async def age_check(age: int):
+    if age < 18:
+        return {"message": "Sorry, you are not an adult"}
+    return {"message": "Congratulations, you are an adult!"}
 
 #cau3
 @app.get("/multiply/{num1}/{num2}")
