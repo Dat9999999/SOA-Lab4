@@ -1,7 +1,12 @@
 import re
+from xmlrpc.client import DateTime
 
 from fastapi import FastAPI ,HTTPException
 from entity.User import User
+from entity.Color import Color, is_valid_color
+from typing import Optional
+from datetime import datetime
+from entity.Week import Week
 
 app = FastAPI()
 db = {
@@ -22,7 +27,6 @@ db_post ={
         "4" : "You should do more exercise a"
     }
 }
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -34,6 +38,39 @@ async def say_hello(name: str):
 
 
 
+#cau3
+@app.get("/multiply/{num1}/{num2}")
+async def multiply(num1: int, num2: int):
+    return {"message": f"Multiply {num1} by {num2} = {num1 * num2}"}
+
+#cau4
+@app.get("/favorite_color/{color}")
+async def multiply(color: str):
+   try:
+        format_param = color.lower()
+        return {"message": f"your favorite color is {Color(format_param).name}"}
+   except Exception as e:
+       return {"message": "invalid color"}
+
+#cau5
+@app.get("/hello")
+async def say_hello(name : Optional[str] = "world"):
+    return {"message": f"Hello {name}"}
+
+# cau 6
+@app.get("/valid/{year}")
+async def valid_year(year: int):
+    if year not in range(1900, datetime.now().year+1):
+        raise HTTPException(status_code=404, detail="invalid year")
+    return {"message": f"valid year : {year}"}
+
+#cau7
+@app.get("/day_status/{year}/{moth}/{day}")
+async def day_status(year: int, moth: int, day: int):
+    day = datetime(year,moth,day).weekday()
+    if day >= 5:
+        return {"message": f"date is weekend : {Week(day).name}"}
+    return {"message": f"date is weekday : {Week(day).name}"}
 #cau 8
 @app.get("/product/{product_id}")
 async def get_product(product_id: str):
@@ -103,6 +140,7 @@ async def post_comment(post_id: str, comment_id: str):
         raise HTTPException(status_code=404, detail=f"Invalid comment ID: {comment_id}")
     return {"comment": f"{db_post[post_id][comment_id]}"}
 
+#cau13
 @app.get("/file/{file_path:path}")
 async def get_file(file_path: str):
     return {"status": f"receive file successfully {file_path}"}
